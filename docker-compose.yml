@@ -1,0 +1,44 @@
+version: '3'
+
+services: 
+  
+  app:
+    extends: 
+      file: docker-compose.base.yml
+      service: base_app
+    environment: 
+      APP_MODE: user_app 
+    ports: 
+      - 8001:8000
+
+  nginx:
+    extends: 
+      file: docker-compose.base.yml
+      service: base_nginx
+    volumes: 
+      - ./nginx/config/sites-enabled/development.conf:/etc/nginx/sites-enabled/egovcore.conf
+    ports:
+      - 80:80
+    links:
+      - app
+
+  postgres:
+    image: postgres:12
+    env_file:
+      - ./config/.env
+    volumes:
+      - 'postgres_data:/var/lib/postgresql/data'
+    command: postgres -c 'max_connections=100'
+    restart: on-failure
+
+
+
+volumes:
+  postgres_data:
+    driver: local
+
+  media_files:
+    driver: local 
+
+  static_files:
+    driver: local

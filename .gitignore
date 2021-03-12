@@ -1,0 +1,9 @@
+*.pyc
+*.log
+*.dll
+*.lib
+*.exe
+# *.so
+*.pid
+.DS_Store
+config/
