@@ -9,9 +9,9 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import logging
 from pathlib import Path
-
+import sys
 from .exceptions import ImproperlyConfigured
 from .utils import env
 
@@ -20,6 +20,7 @@ from .utils import env
 #
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(BASE_DIR / 'apps'))
 
 SECRET_KEY = env('SECRET_KEY')
 
@@ -44,6 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'webpack_loader',
+    'users',
+    'builder',
 ]
 
 MIDDLEWARE = [
@@ -61,7 +65,9 @@ ROOT_URLCONF = 'system.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'templates'
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -112,6 +118,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'users.User'
+
 #
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -133,10 +141,29 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 #
 
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': not DEBUG,
+        'BUNDLE_DIR_NAME': 'dist/',  # must end with slash
+        'STATS_FILE': str(BASE_DIR / 'static' / 'webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'TIMEOUT': None,
+        'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
+        'LOADER_CLASS': 'system.webpack_loader.WebpackLoader',
+    }
+}
+if not DEBUG:
+    WEBPACK_LOADER.update({
+        'BUNDLE_DIR_NAME': 'dist/',
+        'STATS_FILE': str(BASE_DIR / 'webpack-stats-prod.json')
+    })
+
 STATIC_URL = '/static/'
 STATIC_ROOT = '/mnt/storage/static/'
 
-
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 #
 # Media files (user uploaded files)
 #

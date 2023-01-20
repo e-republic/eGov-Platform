@@ -1,9 +1,9 @@
 version: '3'
 
 services:
-  
+
   base_app:
-    image: bwnimages.azurecr.io/egovcore/app:developemnt
+    # image: bwnimages.azurecr.io/egovcore/app:developemnt
     build:
       context: ./app
       dockerfile: Dockerfile
@@ -16,9 +16,9 @@ services:
       - static_files:/mnt/storage/static
     env_file:
       - ./config/.env
-    command: bash -c ". /scripts/runserver.sh"
+    command: sh /scripts/runserver.sh
     restart: on-failure
-  
+
   base_nginx:
     image: nginx:stable
     env_file:

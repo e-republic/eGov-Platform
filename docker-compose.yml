@@ -1,26 +1,29 @@
 version: '3'
 
-services: 
-  
+services:
+
   app:
-    extends: 
+    extends:
       file: docker-compose.base.yml
       service: base_app
-    environment: 
-      APP_MODE: user_app 
-    ports: 
+    environment:
+      APP_MODE: user_app
+    entrypoint: 'sh /scripts/runserver.sh'
+    links:
+      - "postgres"
+    ports:
       - 8001:8000
 
-  nginx:
-    extends: 
-      file: docker-compose.base.yml
-      service: base_nginx
-    volumes: 
-      - ./nginx/config/sites-enabled/development.conf:/etc/nginx/sites-enabled/egovcore.conf
-    ports:
-      - 80:80
-    links:
-      - app
+#  nginx:
+#    extends:
+#      file: docker-compose.base.yml
+#      service: base_nginx
+#    volumes:
+#      - ./nginx/config/sites-enabled/development.conf:/etc/nginx/sites-enabled/egovcore.conf
+#    ports:
+#      - 80:80
+#    links:
+#      - app
 
   postgres:
     image: postgres:12
@@ -38,7 +41,7 @@ volumes:
     driver: local
 
   media_files:
-    driver: local 
+    driver: local
 
   static_files:
     driver: local

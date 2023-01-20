@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="grid grid-cols-8">
+    <div class="col-span-6">
+      <div id="canvas" style="height: 700px" class="border"></div>
+    </div>
+
+    <div class="col-span-2 border">
+      window here
+    </div>
+  </div>
+  <button id="save" class="btn btn-primary">
+    Save
+  </button>
+
+{% endblock %}
+
+{% block bottom %}
+  {{ block.super }}
+  {% include 'builder/modals/new_task.html' %}
+{% endblock %}

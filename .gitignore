@@ -6,4 +6,9 @@
 # *.so
 *.pid
 .DS_Store
-config/
+/config/
+/.idea/
+/.venv/
+node_modules
+webpack-stats.json
+dist/
